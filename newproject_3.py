@@ -35,14 +35,12 @@ while True:
         print("Kilometers:      " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
     #Displays the fuel used in Liters
         print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
-        
-   
-
         print("=============================================")
         print()
 
+    #For Loop for the route of the location and the destination which will describe one step in a route narrative
         for each in json_data["route"]["legs"][0]["maneuvers"]:
-
+    #Returns textual driving directions for a particula maneuver
             print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
         print("=============================================\n")
     #402 indicates an invalid location
