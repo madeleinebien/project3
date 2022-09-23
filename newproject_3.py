@@ -1,31 +1,70 @@
+import urllib.parse
 import requests
 
-#Get the user's current IP Address using API64 API
-def get_ip():
-    response = requests.get('https://api64.ipify.org?format=json').json()
-    return response["ip"]
+main_api = "https://www.mapquestapi.com/directions/v2/route?"
+key = "ezIgTjzAg29S6AWBUxAiS1MpB3qbTKdi"
+#While loop that let's user choose to terminate the system
+while True:
+    orig = input("Starting Location: ")
+    if orig == "quit" or orig == "q":
+        break
+    dest = input("Destination: ")
+    if dest == "quit" or dest == "q":
+        break
 
-#Get the ip, ip version, city, region, country, and country code of the user's current IP Address using IPAPI API 
-def get_location():
-    ip_address = get_ip()
-    response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
-    location_data = { 
-        #Get the IP Address
-        "ip": ip_address,
-        #Get the Version of the IP  Address
-        "version": response.get("version"),
-        #Get the city of the IP Address
-        "city": response.get("city"),
-        #Get the region of the IP Address
-        "region": response.get("region"),
-        #Get the country of the IP Address
-        "country": response.get("country_name"),
-        #Get the country code of the IP Address
-        "country_code": response.get("country_code")
+    url = main_api + urllib.parse.urlencode({"key":key, "from":orig, "to":dest})
+
+    json_data = requests.get(url).json()
+    json_data = requests.get(url).json()
+    json_status = json_data["info"]["statuscode"]
+
+    if json_status == 0:
+        print("______________________________________________")
         
+    
+        print("API Status: " + str(json_status) + " = A successful route call.")
+        print("______________________________________________")
+        print()
+        message = "Directions from " + (orig)  + " to " + (dest)
+        print(message.upper())
+       
+        print("Distance: " + str("{:.2f}".format((json_data["route"]["distance"])*3.78)))
+
+        print("Trip Duration:   " + (json_data["route"]["formattedTime"]))
+
+        print("Kilometers:      " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
+
+        print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
         
-    }
-    return location_data
+   
 
+        print("=============================================")
+        print()
 
-print(get_location())
+        for each in json_data["route"]["legs"][0]["maneuvers"]:
+
+            print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+        print("=============================================\n")
+
+    elif json_status == 402:
+
+        print("**********************************************")
+        print("Status Code: " + str(json_status) + "; Invalid user inputs for one or both locations.")
+        print("**********************************************\n")
+    elif json_status == 611:
+        print("**********************************************")
+        print("Status Code: " + str(json_status) + "; Missing an entry for one or both locations.")
+        print("**********************************************\n")
+
+    else:
+
+        print("************************************************************************")
+        print("For Staus Code: " + str(json_status) + "; Refer to:")
+        print("https://developer.mapquest.com/documentation/directions-api/status-codes")
+        print("************************************************************************\n")
+        
+  
+
+   
+
+  
