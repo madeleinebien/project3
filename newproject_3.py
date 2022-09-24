@@ -2,13 +2,11 @@ import requests
 import socket
 from requests import get
 
-# API data
+# API data's URL and API key for access
 BASE_URL = "http://api.ipstack.com/"
 API_KEY = "?access_key=5e9135d065d6ffcebcb24622c4ea84ea"
 
-#Function that asks the user to choose whether to manually or automatically enter their IP Address
 def main():
-
     #For Loop for User's Choice 
     while True:
         #Asks users to input their choice
@@ -18,7 +16,7 @@ def main():
         #Asks if the user wants to automatically retrieve their IP Address
         print(f"A - Automatically get your IP Address")
         #Terminates the system
-        print(f"q - Quit")
+        print(f"Q - Quit")
         choice_user = input("Enter: ")
 
         # Get the device's IP address through the API's website 
@@ -47,7 +45,8 @@ def apiRequest(choice_user):
 
         # Displays the data output
         #Displays the IP Address
-        print(f"\nIP Address: {(data['ip'])}")
+        print()
+        print(f"IP Address: {(data['ip'])}")
         #Displays the type of the IP Address (IPV4/IPV6)
         print(f"Version: {(data['type'])}")
         #Displays the continent name based on the IP Address
