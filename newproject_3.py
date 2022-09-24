@@ -1,82 +1,74 @@
-import urllib.parse
 import requests
+import socket
+from requests import get
 
-main_api = "https://www.mapquestapi.com/directions/v2/route?"
-key = "ezIgTjzAg29S6AWBUxAiS1MpB3qbTKdi"
-#While loop that let's user choose to terminate the system
-while True:
-    orig = input("Starting Location: ")
-    if orig == "quit" or orig == "q":
-        break
-    dest = input("Destination: ")
-    if dest == "quit" or dest == "q":
-        break
-    #Get requests from the API 
-    url = main_api + urllib.parse.urlencode({"key":key, "from":orig, "to":dest})
-    json_data = requests.get(url).json()
-    json_data = requests.get(url).json()
-    #Retrieves the status code of the location and destination from the MapQuest API
-    json_status = json_data["info"]["statuscode"]
-    #If else based on the status code of the inputted location and destination 
-    #0 indicates a successful route call
-    if json_status == 0:
-        print("______________________________________________")
-        print("API Status: " + str(json_status) + " = A successful route call.")
-        print("______________________________________________")
+# API data
+BASE_URL = "http://api.ipstack.com/"
+API_KEY = "?access_key=5e9135d065d6ffcebcb24622c4ea84ea"
+
+#Function that asks the user to choose whether to manually or automatically enter their IP Address
+def main():
+
+    #For Loop for User's Choice 
+    while True:
+        #Asks users to input their choice
+        print(f"Please input your choice: ")
+        #Asks if user want to manually input an IP Address
+        print(f"M - Input manually an IP Address")
+        #Asks if the user wants to automatically retrieve their IP Address
+        print(f"A - Automatically get your IP Address")
+        #Terminates the system
+        print(f"q - Quit")
+        choice_user = input("Enter: ")
+
+        # Get the device's IP address through the API's website 
+        if choice_user == "A" or choice_user == "a":
+            ip_address = get('https://api.ipify.org').content.decode('utf8')
+            apiRequest(ip_address)
+        # User Manually enters an IP Address
+        elif choice_user == "M" or choice_user == "m":
+            ip_address = input("Enter an IP address: ")
+        #Requests the information of the IP Address through the API
+            apiRequest(ip_address)
+        # Terminates the system
+        elif choice_user == "Q" or choice_user == "q":
+            break
+        # User input is invalid
+        else:
+            continue
+
+def apiRequest(choice_user):
+    try:
+        # Validates if IPV4/IPV6 Address is valid
+        socket.inet_aton(choice_user)
+        # Request from the API 
+        api_request = BASE_URL + choice_user + API_KEY
+        data = requests.get(api_request).json()
+
+        # Displays the data output
+        #Displays the IP Address
+        print(f"\nIP Address: {(data['ip'])}")
+        #Displays the type of the IP Address (IPV4/IPV6)
+        print(f"Version: {(data['type'])}")
+        #Displays the continent name based on the IP Address
+        print(f"Continent: {(data['continent_name'])}")
+        #Displays the country name based on the IP Address
+        print(f"Country Name: {(data['country_name'])}")
+        #Displays the country code based on the IP Address
+        print(f"Country Code: {(data['country_code'])}")
+        #Displays the region code based on the IP Address
+        print(f"Region Code: {(data['region_code'])}")
+        #Displays the region name based on the IP Address
+        print(f"Region Name: {(data['region_name'])}")
+        #Displays the city based on the IP Address
+        print(f"City: {(data['city'])}")
+        #Displays the zip code based on the IP Address
+        print(f"Zip Code: {(data['zip'])}")
         print()
-    #Displays the entered original location and destination in uppercase 
-        message = "Directions from " + (orig)  + " to " + (dest)
-        print(message.upper())
-    #Displays the distance of the location and destination 
-        print("Distance: " + str("{:.2f}".format((json_data["route"]["distance"])*3.78)))
-    #Displays the duration of the trip in time format 
-        print("Trip Duration:   " + (json_data["route"]["formattedTime"]))
-    #Displays the kilometers 
-        print("Kilometers:      " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
-    #Displays the fuel used in Liters
-        print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
-        print("=============================================")
-        print()
 
-    #For Loop for the route of the location and the destination which will describe one step in a route narrative
-        for each in json_data["route"]["legs"][0]["maneuvers"]:
-    #Returns textual driving directions for a particula maneuver
-            print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
-        print("=============================================\n")
-    #402 indicates an invalid location
-    elif json_status == 402:
-        print("**********************************************")
-        print("Status Code: " + str(json_status) + "; Invalid user inputs for one or both locations.")
-        print("**********************************************\n")
-    #611 indicates that only one location has been entered by the user 
-    elif json_status == 611:
-        print("**********************************************")
-        print("Status Code: " + str(json_status) + "; Missing an entry for one or both locations.")
-        print("**********************************************\n")
-    #500 indicates that there is an unknown error  
-    elif json_status == 500:
-        print("**********************************************")
-        print("Status Code: " + str(json_status) + "; Unknown Error.")
-        print("**********************************************\n")
-    #606 indicates that the user has exceeded the maximum number of locations 
-    elif json_status == 606:
-        print("**********************************************")
-        print("Status Code: " + str(json_status) + "; Exceeded the maximum search distance.")
-        print("**********************************************\n")
-    #612 indicates that there are no routes available for the entered locations 
-    elif json_status == 612:
-        print("**********************************************")
-        print("Status Code: " + str(json_status) + "; There are no routes available for these locations.")
-        print("**********************************************\n")
-    else:
+    # An error message if IP Address is not valid
+    except socket.error:
+        print("Error! IP Address is not valid.")
 
-        print("************************************************************************")
-        print("For Staus Code: " + str(json_status) + "; Refer to:")
-        print("https://developer.mapquest.com/documentation/directions-api/status-codes")
-        print("************************************************************************\n")
-        
-  
-
-   
-
-  
+if __name__=="__main__":
+    main()
