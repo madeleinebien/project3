@@ -22,12 +22,12 @@ def main():
         # Get the device's IP address through the API's website 
         if choice_user == "A" or choice_user == "a":
             ip_address = get('https://api.ipify.org').content.decode('utf8')
-            apiRequest(ip_address)
+            get_location(ip_address)
         # User Manually enters an IP Address
         elif choice_user == "M" or choice_user == "m":
             ip_address = input("Enter an IP address: ")
         #Requests the information of the IP Address through the API
-            apiRequest(ip_address)
+            get_location(ip_address)
         # Terminates the system
         elif choice_user == "Q" or choice_user == "q":
             break
@@ -35,7 +35,7 @@ def main():
         else:
             continue
 
-def apiRequest(choice_user):
+def get_location(choice_user):
     try:
         # Validates if IPV4/IPV6 Address is valid
         socket.inet_aton(choice_user)
@@ -44,8 +44,8 @@ def apiRequest(choice_user):
         data = requests.get(api_request).json()
 
         # Displays the data output
-        #Displays the IP Address
         print()
+        #Displays the IP Address
         print(f"IP Address: {(data['ip'])}")
         #Displays the type of the IP Address (IPV4/IPV6)
         print(f"Version: {(data['type'])}")
