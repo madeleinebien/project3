@@ -63,6 +63,14 @@ def get_location(choice_user):
         print(f"City: {(data['city'])}")
         #Displays the zip code based on the IP Address
         print(f"Zip Code: {(data['zip'])}")
+        #Displays the latitude of the IP Address
+        print(f"Latitude: {(data['latitude'])}")
+        #Displays the longitude of the IP Address
+        print(f"Longitude: {(data['longitude'])}")
+        #Displays the location of the IP Address
+        print(f"Location: {(data['location'])}")
+        #Displays the location of the IP Address
+        print(f"Connection: {(data['connection'])}")
         print()
 
     # An error message if IP Address is not valid
